@@ -52,4 +52,29 @@ final class LogMasker
         }
         return false;
     }
+
+    /**
+     * addKeys
+     */
+    public function addKeys(/* ... */): mixed
+    {
+        // TODO: Implement per docs.
+        return null;
+    }
+    /**
+     * addPatterns
+     */
+    public function addPatterns(/* ... */): mixed
+    {
+        // TODO: Implement per docs.
+        return null;
+    }
+    /**
+     * maskString
+     */
+    public function maskString(/* ... */): mixed
+    {
+        // TODO: Implement per docs.
+        return null;
+    }
 }
