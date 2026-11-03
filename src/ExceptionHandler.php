@@ -34,7 +34,7 @@ final class ExceptionHandler
             $result = $renderable($e, $this->debug);
             if ($result !== null) return $result;
         }
-        $status = $e instanceof HttpException ? $e->getStatusCode() : 500;
+        $status = $e instanceof HttpException ? $e->statusCode : 500;
         $message = $e->getMessage();
         if (!$this->debug && $status >= 500) {
             $message = 'Internal Server Error';

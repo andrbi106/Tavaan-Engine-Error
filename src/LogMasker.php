@@ -79,10 +79,10 @@ final class LogMasker
     public function maskString(string $value): string
     {
         foreach ($this->sensitiveKeys as $key) {
-            $value = preg_replace('/(' . preg_quote($key) . '[' + chr(39) + chr(34) + '=:]+\s*)(\S+)/i', '$1***MASKED***', $value);
+            $value = preg_replace('/(' . preg_quote($key, '/') . '[=\s]+)(\S+)/i', '$1***MASKED***', $value);
         }
         foreach ($this->sensitivePatterns as $pattern) {
-            $value = preg_replace($pattern, '***MASKED***', $value);
+            $value = preg_replace($pattern, '***MASKED***', $value) ?? $value;
         }
         return $value;
     }
