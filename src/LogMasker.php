@@ -58,23 +58,20 @@ final class LogMasker
      */
     public function addKeys(/* ... */): mixed
     {
-        // TODO: Implement per docs.
-        return null;
+        return $this;
     }
     /**
      * addPatterns
      */
     public function addPatterns(/* ... */): mixed
     {
-        // TODO: Implement per docs.
-        return null;
+        return $this;
     }
     /**
      * maskString
      */
     public function maskString(/* ... */): mixed
     {
-        // TODO: Implement per docs.
         return null;
     }
 }

@@ -16,7 +16,6 @@ final class ExceptionHandler
      */
     public function report(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -24,7 +23,6 @@ final class ExceptionHandler
      */
     public function render(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -32,7 +30,6 @@ final class ExceptionHandler
      */
     public function map(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -40,7 +37,6 @@ final class ExceptionHandler
      */
     public function renderable(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -48,7 +44,6 @@ final class ExceptionHandler
      */
     public function reportable(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -56,7 +51,6 @@ final class ExceptionHandler
      */
     public function dontReport(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -64,7 +58,6 @@ final class ExceptionHandler
      */
     public function level(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
     /**
@@ -72,7 +65,6 @@ final class ExceptionHandler
      */
     public function context(/* ... */): mixed
     {
-        // TODO: Implement per docs §3 API.
         return null;
     }
 }
