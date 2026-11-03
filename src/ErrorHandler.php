@@ -121,7 +121,8 @@ final class ErrorHandler
         }
         // Detect format from SAPI or accept negotiation
         if (\PHP_SAPI === 'cli') {
-            echo "Error [{$httpException->statusCode}] {$httpException->errorCode}: {$httpException->getMessage()} (ref: {$httpException->refCode})\n";
+            echo "Error [{$httpException->statusCode}] {$httpException->errorCode}: {$httpException->getMessage()} (ref: {$httpException->refCode})
+";
             return;
         }
         $isJson = \str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');

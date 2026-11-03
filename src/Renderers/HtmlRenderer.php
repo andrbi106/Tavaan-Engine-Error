@@ -22,7 +22,9 @@ final class HtmlRenderer
             if ($prev !== null) {
                 $debugSection = "<h3>Debug</h3><pre>"
                     . $this->escape(\get_class($prev)) . ": "
-                    . $this->escape($prev->getMessage()) . "\n\n"
+                    . $this->escape($prev->getMessage()) . "
+
+"
                     . $this->escape($prev->getTraceAsString()) . "</pre>";
             }
         }
