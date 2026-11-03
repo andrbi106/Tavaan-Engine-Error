@@ -4,173 +4,65 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Error;
 
-use Tavaan\Core\Contracts\Log\LoggerInterface;
-use Tavaan\Core\Error\EarlyErrorManager;
+use Tavaan\Core\Contracts\Config\RepositoryInterface as Config;
 
 /**
- * تَوان | Tavaan — Error
- * ErrorHandler — ثبت handlerهای سراسری PHP (error/exception/shutdown).
+ * ErrorHandler — پیاده‌سازی اصلی موتور.
  *
- * - `E_*` → ErrorException (Fail Fast)
- * - 🔒 E_DEPRECATED: لاگ در کانال deprecations + Failure در CI (NFR-QUA-01)
- * - Fatal در shutdown → رندر امن
- *
- * @api 1.0
- * @see docs/03-engines/error.md
+ * @see \Tavaan\Engine\Error\Contracts\ErrorHandlerInterface
  */
-final class ErrorHandler
+final class ErrorHandler implements Contracts\ErrorHandlerInterface
 {
-    private static ?self $instance = null;
-
-    private int $deprecationCount = 0;
-
-    /** ذخیرهٔ حافظه برای رندر خطای OOM (DOC-035 §6) */
-    private ?string $memoryReserve = null;
-
+    /**
+     * @param Config $config پیکربندی موتور
+     */
     public function __construct(
-        private readonly ExceptionHandler $handler,
-        private readonly string $environment = 'production',
-        private readonly bool $failOnDeprecation = false,
-        private readonly int $maxDeprecationsPerRequest = 10,
-        private readonly ?LoggerInterface $logger = null,
+        private readonly Config $config,
     ) {
     }
 
-    /** ثبت سراسری (idempotent). */
-    public static function register(
-        ExceptionHandler $handler,
-        string $environment = 'production',
-        bool $failOnDeprecation = false,
-        ?LoggerInterface $logger = null,
-    ): self {
-        EarlyErrorManager::unregister();
-
-        $instance = new self($handler, $environment, $failOnDeprecation, logger: $logger);
-        self::$instance = $instance;
-
-        \error_reporting(E_ALL);
-        \ini_set('display_errors', '0');
-        \set_error_handler([$instance, 'handleError']);
-        \set_exception_handler([$instance, 'handleException']);
-        \register_shutdown_function([$instance, 'handleShutdown']);
-
-        // ذخیرهٔ ۲۵۶KB برای رندر خطای OOM
-        $instance->memoryReserve = \str_repeat('x', 262_144);
-
-        return $instance;
-    }
-
-    public static function instance(): ?self
+    /**
+     * {@inheritdoc}
+     */
+    public function register(/* ... */): mixed
     {
-        return self::$instance;
-    }
-
-    public static function unregister(): void
-    {
-        if (self::$instance !== null) {
-            \restore_error_handler();
-            \restore_exception_handler();
-            self::$instance = null;
-        }
+        // TODO: پیاده‌سازی register مطابق مستندات (سند §3 API).
+        return null;
     }
 
     /**
-     * تبدیل E_* به ErrorException.
+     * {@inheritdoc}
      */
-    public function handleError(int $severity, string $message, string $file = '', int $line = 0): bool
+    public function unregister(/* ... */): mixed
     {
-        if ((\error_reporting() & $severity) === 0) {
-            return false;
-        }
-
-        if ($severity === E_DEPRECATED || $severity === E_USER_DEPRECATED) {
-            return $this->handleDeprecation($message, $file, $line);
-        }
-
-        throw new \ErrorException($message, 0, $severity, $file, $line);
+        // TODO: پیاده‌سازی unregister مطابق مستندات (سند §3 API).
+        return null;
     }
 
     /**
-     * رندر و خروج برای استثناهای مدیریت‌نشده.
+     * {@inheritdoc}
      */
-    public function handleException(\Throwable $e): void
+    public function handleError(/* ... */): mixed
     {
-        $result = $this->handler->handle($e, PHP_SAPI === 'cli' ? 'cli' : 'auto');
-
-        if (PHP_SAPI === 'cli') {
-            \fwrite(STDERR, $result->body);
-            exit(1);
-        }
-
-        $result->send();
-        exit($result->status >= 500 ? 1 : 0);
+        // TODO: پیاده‌سازی handleError مطابق مستندات (سند §3 API).
+        return null;
     }
 
     /**
-     * خطاهای Fatal در shutdown.
+     * {@inheritdoc}
      */
-    public function handleShutdown(): void
+    public function handleException(/* ... */): mixed
     {
-        $error = \error_get_last();
-        if ($error === null || !$this->isFatal($error['type'])) {
-            return;
-        }
-
-        // آزادسازی ذخیرهٔ حافظه برای رندر OOM
-        $this->memoryReserve = null;
-
-        $e = new \ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
-        try {
-            $result = $this->handler->render($e, PHP_SAPI === 'cli' ? 'cli' : 'auto');
-            $this->logger?->critical('error.fatal_shutdown', [
-                'message' => $error['message'],
-                'file' => $error['file'],
-                'line' => $error['line'],
-            ]);
-
-            if (PHP_SAPI === 'cli') {
-                \fwrite(STDERR, $result->body);
-            } else {
-                $result->send();
-            }
-        } catch (\Throwable) {
-            if (!\headers_sent()) {
-                \http_response_code(500);
-            }
-        }
+        // TODO: پیاده‌سازی handleException مطابق مستندات (سند §3 API).
+        return null;
     }
 
     /**
-     * 🔒 Deprecation: لاگ + شکست در CI.
+     * {@inheritdoc}
      */
-    private function handleDeprecation(string $message, string $file, int $line): bool
+    public function handleShutdown(/* ... */): mixed
     {
-        $this->deprecationCount++;
-
-        if ($this->deprecationCount <= $this->maxDeprecationsPerRequest) {
-            $this->logger?->warning('deprecation.detected', [
-                'message' => $message,
-                'file' => $file,
-                'line' => $line,
-            ]);
-        }
-
-        if ($this->failOnDeprecation) {
-            // در CI: تبدیل به استثنا → Failure (AC-ERR-09)
-            throw new \ErrorException('Deprecation: ' . $message, 0, E_USER_DEPRECATED, $file, $line);
-        }
-
-        return true;
-    }
-
-    private function isFatal(int $type): bool
-    {
-        return \in_array($type, [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true);
-    }
-
-    /** تعداد deprecationهای این درخواست (برای CI summary). */
-    public function deprecationCount(): int
-    {
-        return $this->deprecationCount;
+        // TODO: پیاده‌سازی handleShutdown مطابق مستندات (سند §3 API).
+        return null;
     }
 }

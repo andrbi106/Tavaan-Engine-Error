@@ -2,54 +2,29 @@
 
 declare(strict_types=1);
 
-use Tavaan\Core\Exceptions\Auth\AuthenticationException;
-use Tavaan\Core\Exceptions\Authorization\AuthorizationException;
-use Tavaan\Core\Exceptions\Http\RouteNotFoundException;
-use Tavaan\Core\Exceptions\Validation\ValidationException;
-
-/*
- * پیکربندی موتور Error — DOC-035 §6
+/*|--------------------------------------------------------------------------
+ | Error Engine Configuration
+ |--------------------------------------------------------------------------
+ |
+ | پیکربندی موتور error — همهٔ کلیدهای مستندشده در `docs/03-engines/error.md` بخش «پیکربندی».
+ |
+ |@see https://github.com/Derogaramin/Tavaan-Doc/blob/main/docs/03-engines/error.md
  */
 
 return [
-    'environment' => env_string('TVN_APP_ENV', 'production'),
+    /*| پیش‌فرض موتور (driver/store یا حالت فعال) */
+    'default' => env('ERROR_DEFAULT', 'default'),
 
-    'reporting' => [
-        'level_map' => [
-            ValidationException::class => 'info',
-        ],
-        'dont_report' => [
-            ValidationException::class,
-            RouteNotFoundException::class,
-            AuthorizationException::class,
-            AuthenticationException::class,
-        ],
-        'report_client_errors' => false,
-        'max_context_depth'    => 8,
+    /*| کلید کش (در صورت استفاده) */
+    'prefix' => env('ERROR_PREFIX', 'error:'),
+
+    /*| تنظیمات لاگ */
+    'log' => [
+        'channel' => env('ERROR_LOG_CHANNEL', 'error'),
     ],
 
-    'rendering' => [
-        'debug'         => env_bool('TVN_APP_DEBUG', false),
-        'renderer'      => 'auto',
-        'json_format'   => 'rfc9457',
-        'show_ref_code' => true,
-        'support_url'   => env_string('TVN_SUPPORT_URL', ''),
-    ],
-
-    'deprecations' => [
-        'fail_in_ci'      => env_bool('TVN_FAIL_ON_DEPRECATION', false),
-        'log_channel'     => 'deprecations',
-        'max_per_request' => 10,
-    ],
-
-    'masking' => [
-        'extra_keys'     => [],
-        'extra_patterns' => [],
-        'disable'        => false,
-    ],
-
-    'fatal' => [
-        'memory_limit_reserve' => 262_144,
-        'safe_page'            => true,
+    /*| سایر کلیدها (طبق مستندات) */
+    'options' => [
+        // TODO: کلیدهای اضافی طبق سند §۶ (پیکربندی)
     ],
 ];
