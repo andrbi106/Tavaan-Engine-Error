@@ -4,67 +4,92 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Error;
 
-/**
- * ExceptionHandler — پیاده‌سازی مطابق مستندات.
- *
- * @see docs/03-engines/ (YAML machine-readable block)
- */
 final class ExceptionHandler
 {
-    /**
-     * report
-     */
-    public function report()
-    {
-        return null;
+    private array $dontReportList = [];
+    private array $renderables = [];
+    private array $reportables = [];
+    private array $context = [];
+    private array $levels = [];
+
+    public function __construct(
+        private readonly ?object $logger = null,
+        private bool $debug = false,
+    ) {
     }
-    /**
-     * render
-     */
-    public function render()
+
+    public function report(\Throwable $e): void
     {
-        return null;
+        foreach ($this->dontReportList as $class) {
+            if ($e instanceof $class) return;
+        }
+        if ($this->logger !== null && method_exists($this->logger, 'error')) {
+            $this->logger->error($e->getMessage(), $this->buildContext($e));
+        }
     }
-    /**
-     * map
-     */
-    public function map()
+
+    public function render(\Throwable $e): string
     {
-        return null;
+        foreach ($this->renderables as $renderable) {
+            $result = $renderable($e, $this->debug);
+            if ($result !== null) return $result;
+        }
+        $status = $e instanceof HttpException ? $e->getStatusCode() : 500;
+        $message = $e->getMessage();
+        if (!$this->debug && $status >= 500) {
+            $message = 'Internal Server Error';
+        }
+        $renderer = new Renderers\JsonRenderer();
+        $httpException = $e instanceof HttpException ? $e : HttpException::serverError($message);
+        return $renderer->render($httpException, $this->debug);
     }
-    /**
-     * renderable
-     */
-    public function renderable()
+
+    public function map(string $from, string|callable $to): self
     {
-        return null;
+        $this->map[$from] = $to;
+        return $this;
     }
-    /**
-     * reportable
-     */
-    public function reportable()
+
+    public function renderable(callable $callback): self
     {
-        return null;
+        $this->renderables[] = $callback;
+        return $this;
     }
-    /**
-     * dontReport
-     */
-    public function dontReport()
+
+    public function reportable(callable $callback): self
     {
-        return null;
+        $this->reportables[] = $callback;
+        return $this;
     }
-    /**
-     * level
-     */
-    public function level()
+
+    public function dontReport(string ...$classes): self
     {
-        return null;
+        foreach ($classes as $class) {
+            $this->dontReportList[] = $class;
+        }
+        return $this;
     }
-    /**
-     * context
-     */
-    public function context()
+
+    public function level(string $class, string $level): self
     {
-        return null;
+        $this->levels[$class] = $level;
+        return $this;
     }
+
+    public function context(array $context): self
+    {
+        $this->context = array_merge($this->context, $context);
+        return $this;
+    }
+
+    private function buildContext(\Throwable $e): array
+    {
+        return array_merge($this->context, [
+            'exception' => get_class($e),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+    }
+
+    private array $map = [];
 }
