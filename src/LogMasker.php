@@ -56,21 +56,21 @@ final class LogMasker
     /**
      * addKeys
      */
-    public function addKeys(/* ... */): mixed
+    public function addKeys()
     {
-        return $this;
+        return null;
     }
     /**
      * addPatterns
      */
-    public function addPatterns(/* ... */): mixed
+    public function addPatterns()
     {
-        return $this;
+        return null;
     }
     /**
      * maskString
      */
-    public function maskString(/* ... */): mixed
+    public function maskString()
     {
         return null;
     }

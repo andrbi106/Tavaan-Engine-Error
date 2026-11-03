@@ -14,56 +14,56 @@ final class ExceptionHandler
     /**
      * report
      */
-    public function report(/* ... */): mixed
+    public function report()
     {
         return null;
     }
     /**
      * render
      */
-    public function render(/* ... */): mixed
+    public function render()
     {
         return null;
     }
     /**
      * map
      */
-    public function map(/* ... */): mixed
+    public function map()
     {
         return null;
     }
     /**
      * renderable
      */
-    public function renderable(/* ... */): mixed
+    public function renderable()
     {
         return null;
     }
     /**
      * reportable
      */
-    public function reportable(/* ... */): mixed
+    public function reportable()
     {
         return null;
     }
     /**
      * dontReport
      */
-    public function dontReport(/* ... */): mixed
+    public function dontReport()
     {
         return null;
     }
     /**
      * level
      */
-    public function level(/* ... */): mixed
+    public function level()
     {
         return null;
     }
     /**
      * context
      */
-    public function context(/* ... */): mixed
+    public function context()
     {
         return null;
     }
