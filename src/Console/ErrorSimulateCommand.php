@@ -9,7 +9,7 @@ use Tavaan\Core\Contracts\Console\CommandInterface;
 /**
  * error:simulate command.
  */
-final class Error_simulateCommand implements CommandInterface
+final class ErrorSimulateCommand implements CommandInterface
 {
     public function name(): string
     {
