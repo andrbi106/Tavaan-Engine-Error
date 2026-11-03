@@ -2,29 +2,25 @@
 
 declare(strict_types=1);
 
-/*|--------------------------------------------------------------------------
- | Error Engine Configuration
- |--------------------------------------------------------------------------
- |
- | پیکربندی موتور error — همهٔ کلیدهای مستندشده در `docs/03-engines/error.md` بخش «پیکربندی».
- |
- |@see https://github.com/Derogaramin/Tavaan-Doc/blob/main/docs/03-engines/error.md
- */
-
 return [
-    /*| پیش‌فرض موتور (driver/store یا حالت فعال) */
-    'default' => env('ERROR_DEFAULT', 'default'),
+    /*| حالت debug */
+    'debug' => \getenv('TVN_DEBUG') !== false
+        ? \filter_var(\getenv('TVN_DEBUG'), \FILTER_VALIDATE_BOOL)
+        : false,
 
-    /*| کلید کش (در صورت استفاده) */
-    'prefix' => env('ERROR_PREFIX', 'error:'),
+    /*| ثبت خودکار handlerها */
+    'auto_register' => \getenv('TVN_ERROR_AUTO_REGISTER') !== false
+        ? \filter_var(\getenv('TVN_ERROR_AUTO_REGISTER'), \FILTER_VALIDATE_BOOL)
+        : true,
 
-    /*| تنظیمات لاگ */
-    'log' => [
-        'channel' => env('ERROR_LOG_CHANNEL', 'error'),
-    ],
+    /*| تبدیل E_DEPRECATED به خطا */
+    'strict_deprecated' => \getenv('TVN_ERROR_STRICT') !== false
+        ? \filter_var(\getenv('TVN_ERROR_STRICT'), \FILTER_VALIDATE_BOOL)
+        : false,
 
-    /*| سایر کلیدها (طبق مستندات) */
-    'options' => [
-        // TODO: کلیدهای اضافی طبق سند §۶ (پیکربندی)
-    ],
+    /*| نمایش stack trace در debug */
+    'show_trace' => true,
+
+    /*| کلیدهای حساس برای mask */
+    'sensitive_keys' => ['password', 'token', 'api_key', 'secret', 'cvv', 'pin'],
 ];

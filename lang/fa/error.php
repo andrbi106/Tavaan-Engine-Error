@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-/*| پیام‌های fa برای موتور error */
-
 return [
-    'error_default' => 'خطای ناشناخته (error)',
-    'not_configured' => 'موتور پیکربندی نشده است (error)',
+    'error_generic' => 'خطای ناشناخته',
+    'error_not_found' => 'یافت نشد',
+    'error_unauthorized' => 'احراز هویت لازم است',
+    'error_forbidden' => 'دسترسی ممنوع',
+    'error_server' => 'خطای سرور',
+    'error_validation' => 'خطای اعتبارسنجی',
 ];

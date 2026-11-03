@@ -11,27 +11,17 @@
     }
   },
   "providers": [
-    "Tavaan\\Engine\\Error\\ExceptionHandlerServiceProvider"
+    "Tavaan\\Engine\\Error\\ErrorServiceProvider"
   ],
   "requires": {
     "php": ">=8.2",
-    "engines": [
-      "config",
-      "log"
-    ]
-  },
-  "soft_requires": {
-    "engines": [
-      "event"
-    ]
+    "engines": ["config", "log"]
   },
   "config": {
     "file": "config/error.php",
     "key": "error"
   },
   "tables": [],
-  "commands": [
-    "error:simulate"
-  ],
+  "commands": [],
   "docs": "docs/03-engines/error.md"
 }

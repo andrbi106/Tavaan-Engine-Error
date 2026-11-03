@@ -4,56 +4,52 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Error;
 
-use Tavaan\Core\Contracts\Config\RepositoryInterface as Config;
-
 /**
- * LogMasker — پیاده‌سازی اصلی موتور.
- *
- * @see \Tavaan\Engine\Error\Contracts\LogMaskerInterface
+ * LogMasker — پنهان‌سازی دادهٔ حساس در context.
  */
-final class LogMasker implements Contracts\LogMaskerInterface
+final class LogMasker
 {
+    /** @var list<string> */
+    private array $sensitiveKeys = ['password', 'token', 'api_key', 'secret', 'credit_card', 'cvv', 'ssn', 'pin'];
+
     /**
-     * @param Config $config پیکربندی موتور
+     * @param list<string> $keys
      */
-    public function __construct(
-        private readonly Config $config,
-    ) {
+    public function addSensitiveKey(string ...$keys): self
+    {
+        foreach ($keys as $k) {
+            $this->sensitiveKeys[] = $k;
+        }
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @param array<string, mixed> $context
+     * @return array<string, mixed>
      */
-    public function mask(/* ... */): mixed
+    public function mask(array $context): array
     {
-        // TODO: پیاده‌سازی mask مطابق مستندات (سند §3 API).
-        return null;
+        $result = [];
+        foreach ($context as $key => $value) {
+            if ($this->isSensitive($key)) {
+                $result[$key] = '***masked***';
+            } elseif (\is_array($value)) {
+                $result[$key] = $this->mask($value);
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function maskString(/* ... */): mixed
+    private function isSensitive(string $key): bool
     {
-        // TODO: پیاده‌سازی maskString مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addKeys(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی addKeys مطابق مستندات (سند §3 API).
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addPatterns(/* ... */): mixed
-    {
-        // TODO: پیاده‌سازی addPatterns مطابق مستندات (سند §3 API).
-        return null;
+        $lower = \strtolower($key);
+        foreach ($this->sensitiveKeys as $sensitive) {
+            if (\str_contains($lower, $sensitive)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
