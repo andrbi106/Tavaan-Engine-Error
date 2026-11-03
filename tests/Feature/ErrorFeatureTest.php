@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Error\Tests\Feature;
 
-use PHPUnit\Framework\TestCase;
+use Tavaan\Testing\TestCase;
 use Tavaan\Engine\Error\ErrorHandler;
 use Tavaan\Engine\Error\HttpException;
 use Tavaan\Engine\Error\ErrorServiceProvider;
