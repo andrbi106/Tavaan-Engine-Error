@@ -56,22 +56,34 @@ final class LogMasker
     /**
      * addKeys
      */
-    public function addKeys()
+    public function addKeys(string ...$keys): self
     {
-        return null;
+        foreach ($keys as $k) {
+            $this->sensitiveKeys[] = $k;
+        }
+        return $this;
     }
     /**
      * addPatterns
      */
-    public function addPatterns()
+    public function addPatterns(string ...$patterns): self
     {
-        return null;
+        foreach ($patterns as $p) {
+            $this->sensitivePatterns[] = $p;
+        }
+        return $this;
     }
     /**
      * maskString
      */
-    public function maskString()
+    public function maskString(string $value): string
     {
-        return null;
+        foreach ($this->sensitiveKeys as $key) {
+            $value = preg_replace('/(' . preg_quote($key) . '[' + chr(39) + chr(34) + '=:]+\s*)(\S+)/i', '$1***MASKED***', $value);
+        }
+        foreach ($this->sensitivePatterns as $pattern) {
+            $value = preg_replace($pattern, '***MASKED***', $value);
+        }
+        return $value;
     }
 }
