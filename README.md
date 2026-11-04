@@ -2,6 +2,8 @@
 
 > **مدیریت خطا** — موتور Error در فریمورک تَوان
 
+این موتور از کلاس پایهٔ `Engine` (در [Tavaan-Engine-Core](https://github.com/andrbi106/Tavaan-Engine-Core)) ارث می‌برد.
+
 ## مشخصات
 
 | فیلد | مقدار |
@@ -11,57 +13,60 @@
 | عنوان فارسی | مدیریت خطا |
 | نسخه | `0.1.0` |
 | namespace | `Tavaan\Engine\Error` |
-| نوع | `engine` |
+| کلاس موتور | `Tavaan\Engine\Error\ErrorEngine` |
+| Facade |  |
 
-## کلاس‌های اصلی
+## کلاس موتور
 
-- `src/ErrorCode.php`
-- `src/ErrorHandler.php`
-- `src/ErrorServiceProvider.php`
-- `src/ExceptionHandler.php`
-- `src/ExceptionMapper.php`
-- `src/HttpException.php`
-- `src/LogMasker.php`
-- `src/RefCodeGenerator.php`
-- `src/RenderResult.php`
-- `src/Renderers/CliRenderer.php`
-- `src/Renderers/DebugRenderer.php`
-- `src/Renderers/HtmlRenderer.php`
-- `src/Renderers/JsonRenderer.php`
+```php
+namespace Tavaan\Engine\Error;
+
+use Tavaan\EngineCore\Engine as BaseEngine;
+use Tavaan\EngineCore\Contracts\EngineManifestInterface;
+
+final class ErrorEngine extends BaseEngine
+{
+    public function __construct(EngineManifestInterface $manifest)
+    {
+        parent::__construct($manifest);
+    }
+
+    public function register(ContainerInterface $container): void
+    {
+        parent::register($container);
+        // bindingهای اختصاصی موتور
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+    }
+}
+```
+
+**فایل:** `src/ErrorEngine.php`
+
+## وابستگی‌ها
+
+**موتورهای مورد‌نیاز:** `config`, `log`
 
 ## Service Providerها
 
 - `Tavaan\Engine\Error\ErrorServiceProvider`
 
-## وابستگی‌ها
+## سه درگاه ارتباط با سایر موتورها
 
-**موتورهای مورد‌نیاز:**
-
-- `config`
-- `log`
-
-## پیکربندی
-
-- فایل پیکربندی: `config/error.php`
-- کلید: `error`
+| درگاه | الگو | متدهای convenience |
+|---|---|---|
+| Container | pull-based DI | `make()`, `bound()` |
+| Events | pub/sub | `dispatch()`, `listen()` |
+| EngineBus | point-to-point RPC | `call()`, `offer()` |
 
 ## نصب
 
 ```bash
 git clone https://github.com/andrbi106/Tavaan-Engine-Error.git
 ```
-
-این موتور بخشی از فریمورک تَوان است و معمولاً به‌صورت مستقیم نصب نمی‌شود،
-بلکه توسط [Tavaan-Core](https://github.com/andrbi106/Tavaan-Core) مدیریت می‌شود.
-
-## روابط با سایر مخازن
-
-| مخزن | نقش |
-|---|---|
-| **`andrbi106/Tavaan-Engine-Error`** (این مخزن) | موتور Error |
-| `andrbi106/Tavaan-Engine-Core` | ساختار پایه + درگاه ارتباط موتورها |
-| `andrbi106/Tavaan-Core` | اسکلت اپلیکیشن + همهٔ موتورها |
-| `Derogaramin/Tavaan-Framework` | فریمورک مادر (monorepo) |
 
 ## مجوز
 
